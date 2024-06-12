@@ -21,7 +21,7 @@ class StoryPagingSource( private val token: String) : PagingSource<Int, ListStor
     override suspend fun load(params: LoadParams<Int>): LoadResult<Int, ListStoryItem> {
         return try {
             val position = params.key ?: INITIAL_PAGE_INDEX
-            val responseData= ApiConfig.getService().getStories(token="Bearer $token").listStory
+            val responseData= ApiConfig.getService().getStories(token="Bearer $token", page = position, size = params.loadSize).listStory
 
 
             LoadResult.Page(
