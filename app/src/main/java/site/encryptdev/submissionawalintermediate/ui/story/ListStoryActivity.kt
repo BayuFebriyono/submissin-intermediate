@@ -18,6 +18,7 @@ import site.encryptdev.submissionawalintermediate.utils.UserPreference
 
 class ListStoryActivity : AppCompatActivity() {
     private lateinit var binding: ActivityListStoryBinding
+    private lateinit var adapter: StoryAdapter
     private val viewModel: StoryViewModel by viewModels {
         ViewModelFactory(this)
     }
@@ -35,7 +36,12 @@ class ListStoryActivity : AppCompatActivity() {
 
 
         val token = userPreference.getToken()
-        setAdapter()
+        
+        adapter = StoryAdapter()
+        binding.rvStory.adapter = adapter
+        viewModel.story.observe(this, {
+            adapter.submitData(lifecycle, it)
+        })
 
         binding.btnLogout.setOnClickListener {
             userPreference.clearCredentials()
@@ -57,18 +63,11 @@ class ListStoryActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
-        val token = userPreference.getToken()
+       adapter.invalidate()
 
     }
 
-    private fun setAdapter() {
-        val adapter = StoryAdapter()
-        binding.rvStory.adapter = adapter
-        viewModel.story.observe(this, {
-            adapter.submitData(lifecycle, it)
-        })
-    }
-
+   
     private fun setLoading(isLoading: Boolean) {
         binding.progressBar.visibility = if (isLoading) View.VISIBLE else View.GONE
     }
